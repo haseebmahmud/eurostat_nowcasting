@@ -1,4 +1,5 @@
 # Nowcasting Competition - Tourism
+# Approach 1: Statistical methods (3-model)
 
 # Team name: Delphi
 # Team member: Haseeb Mahmud
@@ -24,10 +25,11 @@ library(fable)
 library(tsibble)
 library(tsibbledata)
 library(lubridate)
+library(tictoc)
 
 # Data open 
 
-raw <- read_csv("00_Data/tour_occ_nim__custom_3447170_linear.csv")
+raw <- read_csv("00_Data/Sept_2022/tour_occ_nim__custom_3475515_linear.csv")
 
 data <- raw %>% 
   select(geo, TIME_PERIOD, OBS_VALUE) %>%
@@ -38,16 +40,23 @@ data <- as_tsibble(data, index = TIME_PERIOD, key = geo)
 fit <- data %>%
   fill_gaps(OBS_VALUE = 0L) %>%
   model(
-    ets = ETS(OBS_VALUE),
-    arima = ARIMA(OBS_VALUE),
-    theta = THETA(OBS_VALUE)
-  ) %>%
-  mutate(
-    average = (ets + arima + theta) / 3
-  ) 
+    #ets = ETS(OBS_VALUE),
+    arima = ARIMA(OBS_VALUE)
+    #theta = THETA(OBS_VALUE)
+  ) #%>%
+  #mutate(
+    #average = (ets + arima + theta) / 3
+   # averge = (arima + ets) / 2
+  #) 
 
 fc <- fit %>%
-  forecast(h = 2) 
+  forecast(h = 3) 
 
 accuracy_table <- accuracy(fit)
+
+# September forecasts: average
+
+fc_av <- fc %>% 
+  filter(.model == "average") 
+
 

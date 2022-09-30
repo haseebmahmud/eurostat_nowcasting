@@ -1,30 +1,65 @@
 ---
-title: "Untitled"
-format: pdf
-editor: visual
+title: "Eurostat Nowcasting: Methodological Note"
+author:
+  - name: Haseeb Mahmud
+    email: haseeb.mahmud@gmail.com
+    affiliation: Team Delphi
+abstract: |
+  This is the abstract.
+  It consists of two paragraphs.
+
+format:
+  pdf: default
+  jss-pdf:
+    keep-tex: true
+    mainfont: Sans Serif
 ---
 
-## Quarto
+# Introduction
 
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+The September submission is based on the combination/ensemble of three statistical forecasting methods, namely, Autoregressive Integrated Moving Average (ARIMA), Error-Trend-Seasonality (ETS) and Theta model.
 
-## Running Code
+# Statistical Methods
 
-When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this: $x^2$
+## Autoregressive Integrated Moving Average
+Autoregressive integrated moving average models (ARIMA) has three components, namely, 
 
-```{r}
-1 + 1
-```
+- The autoregressive component $p$, 
+- The number of nonseasonal differences needed for stationarity $d$
+- Moving average or lagged forecasted error $q$
 
-You can add options to executable code like this
+To begin with, the time series is required to be stationary. One way to make the series stationary is to compute the differences between consecutive observations. The procedure is called *differencing*. This can be written as,
 
-[![An elephant](images/crossref-figure.png)](elephant)$$
-x = a/(b+c) 
 $$
+y'_t = y_t - y_{t-1}
+$$ {#eq-1}
 
-```{r}
-#| echo: false
-2 * 2
-```
+If the series is differenced with one lag, it is called *first difference*, or *first-order differencing* i.e. $d=1$. In case the series is still non-stationary, further differencing is needed. For example, the second-order differencing looks like this, 
 
-The `echo: false` option disables the printing of code (only output is displayed).
+$$
+y''_t = y'_t - y'_{t-1}
+$$ {#eq-3}
+
+Differencing the data twice means, $d=2$. 
+
+The next component in ARIMA model is called *autoregressive component*. An autoregressive model of order $p$ can be written as, 
+
+$$
+y_t = c + \phi_1 y_{t-1} + \phi_2 y_{t-2} + \ldots + \phi_p y_{t-p} + \epsilon_t 
+$$ {#eq-3}
+
+where, $\epsilon_t$ is white noise. Here we are predicting the series using its past values. We can refer the form @eq-1 as $AR(p)$. 
+
+Instead of using past values to predict the future values, it is possible to use past forecast errors, 
+
+$$
+y_t = c + \epsilon_t + \theta_1 \epsilon_{t-1} + \theta_2 \epsilon_{t-2} + \theta_p \epsilon_{t-q}
+$$ {#eq-4}
+
+where $\epsilon_t$ is white noise. The @eq-4 is called $MA(q)$ model or moving average model of order $q$. 
+
+If we combine differencing ($d$) with autoregressive ($p$) and moving average ($q$) component, we get the full Autoregressive Integrated Moving Average (ARIMA) model, which can be expressed as,
+
+$$
+y'_t = c + \phi_1 y_{t-1} + \phi_2 y_{t-2} + \ldots + \phi_p y_{t-p} + \theta_1 \epsilon_{t-1} + \theta_2 \epsilon_{t-2} + \theta_p \epsilon_{t-q} + \epsilon_t 
+$$ {#eq-5}

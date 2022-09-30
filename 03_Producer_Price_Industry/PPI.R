@@ -27,7 +27,7 @@ library(lubridate)
 
 # Data open 
 
-raw <- read_csv("00_Data/sts_inppd_m__custom_3447413_linear.csv")
+raw <- read_csv("00_Data/Sept_2022/sts_inppd_m__custom_3475531_linear.csv")
 
 data <- raw %>% 
   select(geo, TIME_PERIOD, OBS_VALUE) %>%
@@ -38,16 +38,17 @@ data <- as_tsibble(data, index = TIME_PERIOD, key = geo)
 fit <- data %>%
   fill_gaps(OBS_VALUE = 0L) %>%
   model(
-    ets = ETS(OBS_VALUE),
-    arima = ARIMA(OBS_VALUE),
-    theta = THETA(OBS_VALUE)
-  ) %>%
-  mutate(
-    average = (ets + arima + theta) / 3
-  ) 
+    #ets = ETS(OBS_VALUE),
+    arima = ARIMA(OBS_VALUE)
+    #theta = THETA(OBS_VALUE)
+  ) #%>%
+  #mutate(
+    #average = (ets + arima + theta) / 3
+    #average = (ets + arima) / 2
+  #) 
 
 fc <- fit %>%
-  forecast(h = 2) 
+  forecast(h = 3) 
 
 accuracy_table <- accuracy(fit)
 
